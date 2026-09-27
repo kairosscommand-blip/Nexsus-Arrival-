@@ -1,0 +1,18 @@
+name: NexusArrival
+version: ${project.version}
+main: com.nexuscraft.nexusarrival.NexusArrivalPlugin
+api-version: '1.21'
+author: RealSociety
+description: A private, per-player illusion system -- particles and sound only the player themselves sees/hears, no real mobs, no real danger. A guaranteed spectacle plays once on a brand-new player's very first arrival; after that, random "vision" moments fire throughout each play session and get more intense and more frequent the longer that session runs, resetting back to subtle every time the player logs back in.
+
+commands:
+  nexusarrival:
+    description: Manage NexusArrival and trigger visions manually.
+    usage: /nexusarrival <trigger <visionId> [player]|status [player]|reload>
+    aliases: [arrival]
+    permission: nexusarrival.admin
+
+permissions:
+  nexusarrival.admin:
+    description: Manually trigger visions and reload NexusArrival's config.
+    default: op

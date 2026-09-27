@@ -1,0 +1,107 @@
+# NexusArrival -- every "vision" below is played to exactly one player, via Player#spawnParticle
+# and Player#playSound, which Bukkit/Paper sends only to that one client. Nothing here spawns a
+# real entity, deals real damage, or is visible to anyone standing next to the player -- it's a
+# private illusion, so it works identically whether the player is in a cathedral or a 3x3 closet
+# (like the train-station spawn room this was originally built for).
+
+# The guaranteed, once-ever-per-player spectacle. Fires shortly after a brand-new player's very
+# first join (tracked in arrival_claims.yml so it can never fire twice, and so a player who
+# joined before this plugin existed still gets it exactly once, on their next join).
+arrival-vision:
+  enabled: true
+  delay-seconds: 3
+  vision-id: mosh_pit
+  message: "&d&lSomething stirs as you step through..."
+
+# The ongoing system: while a player is online, a single global timer rolls periodically for a
+# chance to play them a random vision from the pool below. Both the odds of one firing AND which
+# tiers are even eligible scale up with how many minutes THIS session has run -- tracked purely
+# in memory, so it resets to calm/subtle every time a player logs back in, exactly like a fresh
+# session should.
+session:
+  enabled: true
+  check-interval-seconds: 30
+  min-seconds-between-visions: 75
+  base-chance: 0.10
+  chance-per-minute: 0.012
+  max-chance: 0.55
+  tiers:
+    mild:
+      min-session-minutes: 0
+      weight: 10
+    medium:
+      min-session-minutes: 8
+      weight: 6
+    wild:
+      min-session-minutes: 20
+      weight: 3
+
+# The pool. Add more entries here any time -- no rebuild needed, just /nexusarrival reload.
+# tier must be one of the ids under session.tiers above (or arrival-vision's own vision-id,
+# which can be any tier -- mosh_pit is wild by design, since it's meant to be the biggest one).
+visions:
+
+  - id: reality_flicker
+    tier: mild
+    beats:
+      - {type: sound, delay-ticks: 0, sound: ENTITY_ENDERMAN_TELEPORT, volume: 0.5, pitch: 1.5}
+      - {type: particle, delay-ticks: 0, particle: PORTAL, count: 40, offset-x: 0.6, offset-y: 1.0, offset-z: 0.6}
+      - {type: particle, delay-ticks: 8, particle: SOUL, count: 12, offset-x: 0.4, offset-y: 0.7, offset-z: 0.4}
+
+  - id: whispering_dark
+    tier: mild
+    beats:
+      - {type: sound, delay-ticks: 0, sound: AMBIENT_CAVE, volume: 0.6, pitch: 0.7}
+      - {type: particle, delay-ticks: 4, particle: WITCH, count: 6, offset-x: 0.5, offset-y: 0.8, offset-z: 0.5}
+      - {type: sound, delay-ticks: 20, sound: ENTITY_VEX_AMBIENT, volume: 0.35, pitch: 0.8}
+
+  - id: phantom_skirmish
+    tier: medium
+    beats:
+      - {type: sound, delay-ticks: 0, sound: ENTITY_ZOMBIE_AMBIENT, volume: 0.7, pitch: 0.9}
+      - {type: sound, delay-ticks: 3, sound: ENTITY_SKELETON_AMBIENT, volume: 0.7, pitch: 1.1}
+      - {type: particle, delay-ticks: 4, particle: SWEEP_ATTACK, count: 3, offset-x: 0.8, offset-y: 0.6, offset-z: 0.8}
+      - {type: sound, delay-ticks: 8, sound: ENTITY_PLAYER_ATTACK_SWEEP, volume: 0.8, pitch: 1.0}
+      - {type: particle, delay-ticks: 10, particle: CRIT, count: 20, offset-x: 0.8, offset-y: 0.8, offset-z: 0.8}
+      - {type: lightning, delay-ticks: 16}
+      - {type: sound, delay-ticks: 30, sound: ENTITY_ZOMBIE_AMBIENT, volume: 0.5, pitch: 0.7}
+
+  - id: ghostly_duel
+    tier: medium
+    beats:
+      - {type: sound, delay-ticks: 0, sound: ITEM_SHIELD_BLOCK, volume: 0.6, pitch: 1.2}
+      - {type: particle, delay-ticks: 0, particle: SWEEP_ATTACK, count: 2, offset-x: 0.6, offset-y: 0.7, offset-z: 0.6}
+      - {type: sound, delay-ticks: 6, sound: ENTITY_PLAYER_ATTACK_STRONG, volume: 0.7, pitch: 0.9}
+      - {type: particle, delay-ticks: 12, particle: DAMAGE_INDICATOR, count: 15, offset-x: 0.7, offset-y: 0.8, offset-z: 0.7}
+      - {type: sound, delay-ticks: 18, sound: ENTITY_GHAST_SCREAM, volume: 0.3, pitch: 1.6}
+
+  - id: mosh_pit
+    tier: wild
+    beats:
+      - {type: sound, delay-ticks: 0, sound: ENTITY_WITHER_AMBIENT, volume: 0.5, pitch: 0.6}
+      - {type: particle, delay-ticks: 0, particle: LARGE_SMOKE, count: 30, offset-x: 1.2, offset-y: 1.0, offset-z: 1.2}
+      - {type: lightning, delay-ticks: 4}
+      - {type: sound, delay-ticks: 4, sound: ENTITY_ZOMBIE_AMBIENT, volume: 0.9, pitch: 0.8}
+      - {type: sound, delay-ticks: 5, sound: ENTITY_SKELETON_AMBIENT, volume: 0.9, pitch: 1.2}
+      - {type: particle, delay-ticks: 8, particle: SWEEP_ATTACK, count: 10, offset-x: 1.4, offset-y: 0.8, offset-z: 1.4}
+      - {type: sound, delay-ticks: 10, sound: ENTITY_PLAYER_ATTACK_SWEEP, volume: 1.0, pitch: 0.9}
+      - {type: particle, delay-ticks: 14, particle: CRIT, count: 50, offset-x: 1.4, offset-y: 1.0, offset-z: 1.4}
+      - {type: particle, delay-ticks: 14, particle: DAMAGE_INDICATOR, count: 30, offset-x: 1.4, offset-y: 1.0, offset-z: 1.4}
+      - {type: lightning, delay-ticks: 20}
+      - {type: sound, delay-ticks: 22, sound: ENTITY_ZOMBIE_AMBIENT, volume: 0.8, pitch: 1.1}
+      - {type: sound, delay-ticks: 24, sound: ENTITY_PLAYER_ATTACK_CRIT, volume: 0.9, pitch: 1.0}
+      - {type: particle, delay-ticks: 28, particle: ASH, count: 40, offset-x: 1.5, offset-y: 1.2, offset-z: 1.5}
+      - {type: sound, delay-ticks: 34, sound: ENTITY_GHAST_SCREAM, volume: 0.4, pitch: 0.5}
+      - {type: message, delay-ticks: 40, text: "&7...and then it's gone, like it never happened."}
+
+  - id: the_wild_hunt
+    tier: wild
+    beats:
+      - {type: sound, delay-ticks: 0, sound: ENTITY_PHANTOM_AMBIENT, volume: 0.8, pitch: 0.6}
+      - {type: particle, delay-ticks: 0, particle: SOUL, count: 40, offset-x: 1.3, offset-y: 1.1, offset-z: 1.3}
+      - {type: sound, delay-ticks: 4, sound: ENTITY_PHANTOM_FLAP, volume: 0.7, pitch: 0.8}
+      - {type: lightning, delay-ticks: 8}
+      - {type: particle, delay-ticks: 10, particle: ELECTRIC_SPARK, count: 25, offset-x: 1.2, offset-y: 1.2, offset-z: 1.2}
+      - {type: sound, delay-ticks: 14, sound: ENTITY_ENDER_DRAGON_GROWL, volume: 0.25, pitch: 1.3}
+      - {type: particle, delay-ticks: 20, particle: PORTAL, count: 60, offset-x: 1.4, offset-y: 1.2, offset-z: 1.4}
+      - {type: sound, delay-ticks: 26, sound: ENTITY_ENDERMAN_TELEPORT, volume: 0.6, pitch: 0.9}
